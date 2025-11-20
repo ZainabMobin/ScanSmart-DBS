@@ -1,0 +1,155 @@
+CREATE DATABASE IF NOT EXISTS INVENTORY_MANAGEMENT;
+USE INVENTORY_MANAGEMENT;
+
+CREATE TABLE IF NOT EXISTS ManufactureDetail
+(
+ ManufactureID INT PRIMARY KEY AUTO_INCREMENT,
+ ManufactureName VARCHAR(255) NOT NULL,
+ ContactNumber VARCHAR(255) NOT NULL,
+ Email VARCHAR(100)
+ );
+CREATE TABLE IF NOT EXISTS Product 
+(
+ ProdID INT PRIMARY KEY AUTO_INCREMENT,
+ Name VARCHAR(255) NOT NULL,
+ Category VARCHAR(100),
+ Price DECIMAL(10,2) NOT NULL,
+ QuantityAvailable INT NOT NULL,
+ ManufactureID INT NOT NULL,
+ FOREIGN KEY (ManufactureID) REFERENCES ManufactureDetail(ManufactureID)
+);
+ CREATE TABLE IF NOT EXISTS Employee
+ (
+  EmployeeID INT PRIMARY KEY AUTO_INCREMENT,
+  Name VARCHAR(255) NOT NULL,
+  Role ENUM("Admin","Cashier") NOT NULL,
+  ContactNumber VARCHAR (50) NOT NULL,
+  Email VARCHAR (100) NOT NULL,
+  Address VARCHAR(255) NOT NULL,
+  HireDate DATE NOT NULL,
+  Password VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Bill
+(
+ BillID INT PRIMARY KEY AUTO_INCREMENT,
+ CustomerName VARCHAR(255) NOT NULL,
+ Date DATETIME  NOT NULL,
+ TotalAmount DECIMAL(10,2)NOT NULL,
+ EmployeeID INT NOT NULL,
+ FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
+ 
+
+);
+
+
+CREATE TABLE IF NOT EXISTS BillDetail
+(
+ BillDetailID INT PRIMARY KEY AUTO_INCREMENT,
+ BillID INT NOT NULL,
+ ProdID INT NOT NULL,
+ QuantitySold INT,
+ UnitPrice DECIMAL(10,2) NOT NULL,
+ TotalAmount DECIMAL(10,2) NOT NULL,
+ FOREIGN KEY (BillID) REFERENCES Bill(BillID),
+ FOREIGN KEY (ProdId) REFERENCES Product(ProdID)
+);
+
+INSERT INTO ManufactureDetail (ManufactureName, ContactNumber, Email) VALUES
+('Alpha Industries', '03001234567', 'alpha@gmail.com'),
+('Beta Traders', '03017654321', 'beta@gmail.com'),
+('Gamma Electronics', '03121234567', 'gamma@gmail.com'),
+('Delta Foods', '03211234567', 'delta@gmail.com'),
+('Sigma Textiles', '03331234567', 'sigma@gmail.com'),
+('Orion Plastics', '03451234567', 'orion@gmail.com'),
+('Titan Steel', '03099887766', 'titan@gmail.com'),
+('Nova Cosmetics', '03119876543', 'nova@gmail.com'),
+('Apex Pharma', '03225678901', 'apex@gmail.com'),
+('Metro Tools', '03338901234', 'metro@gmail.com');
+
+
+INSERT INTO Product (Name, Category, Price, QuantityAvailable, ManufactureID) VALUES
+('Wireless Mouse', 'Electronics', 1200.00, 50, 1),
+('Keyboard', 'Electronics', 1800.00, 40, 1),
+('LED Bulb 12W', 'Electrical', 350.00, 200, 2),
+('Extension Cable 5m', 'Electrical', 850.00, 60, 2),
+('Shampoo 250ml', 'Cosmetics', 300.00, 90, 3),
+('Face Wash 150ml', 'Cosmetics', 500.00, 70, 3),
+('Flour 10kg', 'Grocery', 1400.00, 120, 4),
+('Cooking Oil 1L', 'Grocery', 620.00, 100, 4),
+('Cotton Shirt', 'Clothing', 1800.00, 45, 5),
+('Jeans Pant', 'Clothing', 2200.00, 30, 5),
+('Plastic Container Set', 'Household', 950.00, 80, 6),
+('Steel Water Bottle', 'Household', 750.00, 60, 7),
+('Painkiller Tablets', 'Pharmacy', 250.00, 150, 8),
+('Vitamin C Syrup', 'Pharmacy', 320.00, 100, 8),
+('Hammer', 'Tools', 650.00, 40, 9),
+('Screwdriver Set', 'Tools', 900.00, 55, 10),
+('USB Cable', 'Electronics', 250.00, 100, 1),
+('Phone Charger', 'Electronics', 850.00, 75, 1),
+('Body Lotion 200ml', 'Cosmetics', 550.00, 80, 3),
+('Toothpaste 120g', 'Grocery', 180.00, 140, 4);
+
+INSERT INTO Employee (Name, Role, ContactNumber, Email, Address, HireDate, Password) VALUES
+('Ali Raza', 'Cashier', '03001112222', 'ali@shop.com', 'Lahore', '2023-01-10','$2b$12$uM5MOi6PoEvex4hnbjbYIOLXcWSnofdYP7AqugTj9csVygQ5HwpLG'),
+('Ahmed Khan', 'Cashier', '03005554433', 'ahmed@shop.com', 'Karachi', '2023-02-15', '$2b$12$oQgiUiz1cJhNWIrUpJdozuvy/uz21ekQzqDvRahTX7LsSlzFr6odC'),
+('Sara Malik', 'Cashier', '03112223344', 'sara@shop.com', 'Islamabad', '2023-03-05', '$2b$12$SiT54wT4wGNtiVnB.QgfNey2gduvRXgZi1RR8EEHJKv9V0s7QYNj2'),
+('Hassan Tariq', 'Cashier', '03224445566', 'hassan@shop.com', 'Multan', '2023-03-20', '$2b$12$K0pWbLl.EVm.EX6REy2WMuAgAc92bLxeQeP7FwCpFBAYCmGDUT3n6'),
+('Fatima Noor', 'Cashier', '03336667788', 'fatima@shop.com', 'Sialkot', '2023-04-01', '$2b$12$UWgh7aECFia9qqASlE98IuY.kjTEdfyq7yMnAaNhg.nI6Y.Nba2SW'),
+('Bilal Yousaf', 'Cashier', '03447778899', 'bilal@shop.com', 'Rawalpindi', '2023-04-15', '$2b$12$sLU5WLd3I64y0XThhquTIOvMYdQkS42E7QRM7hUKDKJaIAvRDO6pm'),
+('Zain Ali', 'Cashier', '03119998877', 'zain@shop.com', 'Peshawar', '2023-05-01', '$2b$12$zU/UWxxfY/z9J4U5LwXVF.o/ZUfOvcUgJYEEd7LorSTfLyhLjMSFu'),
+('Hadiqa Ansar', 'Cashier', '03225556677', 'hadiqa@shop.com', 'Quetta', '2023-05-15', '$2b$12$bOxknzBEbqmsR/wTxOKk7.TL8g3H9eEoqdn9RYA5bZZRqua.6CJmu'),
+('Noman Bashir', 'Admin', '03324446655', 'noman@shop.com', 'Faisalabad', '2023-06-01', '$2b$12$MgS7SSpgvW5wRNHgwCCwN.4jutyEqgl1w8C1D.CtUlDmpqRnVP5Y6'),
+('Maryam Fatima', 'Admin', '03423334455', 'maryam@shop.com', 'Lahore', '2023-06-20', '$2b$12$ZCQsdM0Y4xxGf33dwumDXuWG0yG7GDxtHS9yqR31qYJJdiqVskkge'),
+('Usman Shah', 'Admin', '03017778899', 'usman@shop.com', 'Karachi', '2023-07-01', '$2b$12$P5oasyc/8SnudCPntAOT9uwZilaR/pW4m4ljFkdnmMhUXPtRw.UwS'),
+('Saad Ahmed', 'Admin', '03135554477', 'saad@shop.com', 'Islamabad', '2023-07-10', '$2b$12$DUDgfw3q6US4YzhEeCwnGevjY6dnTRvwKyKFX5XcgH8g.1iskj7Yy'),
+('Maham Arif', 'Admin', '03231112233', 'maham@shop.com', 'Multan', '2023-08-01', '$2b$12$9pVJ3Xv/rmSvnf6Tm1RHieDxNNDSwyxGJFNXbIN2ogCLPPxcQjnIS'),
+('Imran Butt', 'Admin', '03335554466', 'imran@shop.com', 'Kasur', '2023-08-15', '$2b$12$asTdREUE/38Pc495FF4v7OhcpH4M0wfu6.X8Uu8uA0FQsACAaiH36'),
+('Ayesha Khan', 'Admin', '03431112221', 'ayesha@shop.com', 'Gujranwala', '2023-09-01', '$2b$12$5IpsfheF6IqwtPGDB8BmPuUcCYOwpLtaliTVy.rdnZvjILId99Eha');
+
+
+INSERT INTO Bill (CustomerName, Date, TotalAmount, EmployeeID) VALUES
+('Hamza',   '2025-01-01 14:20:00', 2650.00, 2),
+('Ahmad',  '2025-01-02 15:45:00', 1540.00, 3),
+('Zainab','2025-01-03 11:30:00', 3200.00, 4),
+('Fatima','2025-01-04 17:10:00', 3850.00, 5),
+('Babar', '2025-01-05 12:50:00', 3450.00, 6),
+('Iqra',  '2025-01-06 13:40:00', 2000.00, 3),
+('Ali', '2025-01-07 16:00:00', 2860.00, 8),
+('Waqas',  '2025-01-08 10:30:00', 2540.00, 9),
+('Usman', '2025-01-09 18:20:00', 5200.00, 1),
+('Naila', '2025-01-10 19:00:00', 2400.00, 7);
+
+INSERT INTO BillDetail (BillID, ProdID, QuantitySold, UnitPrice, TotalAmount) VALUES
+(1, 1, 2, 1200, 2400),
+(1, 17, 1, 250, 250),
+
+(2, 6, 2, 500, 1000),
+(2, 20, 3, 180, 540),
+
+(3, 2, 1, 1800, 1800),
+(3, 3, 4, 350, 1400),
+
+(4, 10, 1, 2200, 2200),
+(4, 5, 3, 300, 900),
+(4, 12, 1, 750, 750),
+
+(5, 7, 2, 1400, 2800),
+(5, 15, 1, 650, 650),
+
+(6, 19, 2, 550, 1100),
+(6, 16, 1, 900, 900),
+
+(7, 8, 3, 620, 1860),
+(7, 13, 4, 250, 1000),
+
+(8, 11, 2, 950, 1900),
+(8, 14, 2, 320, 640),
+
+(9, 16, 3, 850, 2550),
+(9, 19, 1, 850, 850),
+(9, 20, 1, 1800, 1800),
+
+(10, 3, 2, 350, 700),
+(10, 5, 4, 300, 1200),
+(10, 17, 2, 250, 500);
