@@ -24,7 +24,7 @@ class billDatabase:
             query = "SELECT * FROM Bill"
             cursor.execute(query)
         else:
-            query = "SELECT * FROM Bill WHERE EmployeeId = %s"
+            query = "SELECT * FROM Bill WHERE EmployeeID = %s"
             cursor.execute(query, (emp_id,))
         return cursor.fetchall()
 
@@ -43,3 +43,14 @@ class billDatabase:
         cursor.execute(query)
         billId = cursor.fetchone()
         return billId[0] if billId else None
+    
+    def get_bill_detail_admin(self,billid):  #using join
+        cursor=self.dbconn.cursor()
+        query="""
+            SELECT bd.ProdID, p.Name, bd.QuantitySold, bd.UnitPrice, bd.TotalAmount
+            FROM BillDetail bd
+            JOIN Product p ON bd.ProdID = p.ProdID
+            WHERE bd.BillID = %s"""
+        cursor.execute(query,(billid,))
+        return cursor.fetchall()
+    

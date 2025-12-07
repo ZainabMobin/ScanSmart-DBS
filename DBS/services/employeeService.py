@@ -19,7 +19,7 @@ def validate_login(dbconn, email, password):
     role = employeeDb.get_role_from_id(emp_id)
     return role, emp_id
 
-def validate_cashier_info(dbconn, Name, ContactNumber, Email, Address, Password):
+def validate_employee_info(dbconn, Name,Role, ContactNumber, Email, Address, Password):
     employeeDb = employeeDatabase(dbconn)
     email_chk = contact_chk = pass_chk = True
     if employeeDb.check_email_exists(Email): #email exists in the database already
@@ -32,7 +32,6 @@ def validate_cashier_info(dbconn, Name, ContactNumber, Email, Address, Password)
     if not (email_chk and contact_chk and pass_chk):
         return email_chk, contact_chk, pass_chk
     
-    Role = "Cashier"
     HireDate = datetime.now().strftime('%Y-%m-%d') #converts to datetime in compatible format to be  stored in the database
 
     encrypted_password = encrypt_password(Password)

@@ -16,7 +16,6 @@ class ScannerService:
     #background thread runs and scans QRcode
     def start_scanner(self):
         if self.camera_on:
-            print("Camera turned ON")
             return  # if camera already on, no need to turn it on again
         self.camera_on = True
         self.thread = threading.Thread(target=self._scanner_loop, daemon=True) #camera thread set to daemon thread
@@ -41,7 +40,7 @@ class ScannerService:
                     print(f" New Scan enqueued: {self.latest_id}")
         # When stopped
         if self.cap is not None:
-            self.cap.release()
+            self.cap.release() 
  
     # Returns the latest product ID (once only)
     def get_latest_product_id(self):

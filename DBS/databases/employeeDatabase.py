@@ -61,3 +61,10 @@ class employeeDatabase:
         cursor.execute(query, (Name, Role, ContactNumber, Email, Address, HireDate, encrypted_password))
         self.dbconn.commit() #saves changes in the database
         cursor.close()
+    
+    #get all employeed detail from database
+    def get_employee_details(self):
+        cursor = self.dbconn.cursor()
+        query = "SELECT EmployeeID,Name,Role,ContactNumber,Email FROM employee"
+        cursor.execute(query)
+        return cursor.fetchall()

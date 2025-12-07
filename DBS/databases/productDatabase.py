@@ -41,11 +41,15 @@ class productDatabase:
         return toReturn
     
     def delete_product(self,prod_id):
+        toReturn=False
         cursor=self.dbconn.cursor()
         query = "DELETE FROM product WHERE ProdID=%s"
         cursor.execute(query, (prod_id,))
         self.dbconn.commit()
+        if (cursor.rowcount):
+            toReturn=True
         cursor.close()
+        return toReturn
 
     def update_quantity_available_in_db (self, prod_id, quantityAvailable):
         toReturn = False

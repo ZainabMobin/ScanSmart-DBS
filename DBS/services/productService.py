@@ -1,9 +1,19 @@
 from databases.productDatabase import productDatabase
 from databases.manufactureDatabase import manufactureDatabase 
-from decimal import Decimal
+from models.Product import Product
 import cv2
 import winsound
 from pyzbar import pyzbar
+
+def is_valid_price(value):
+    try:
+        price = float(value)
+        return price > 0  # Only positive prices allowed
+    except ValueError:
+        return False
+
+# Usage:
+
 
 def add_product(dbconn, Name, Category, Price, QuantityAvailable, ManufactureID):
     productDb = productDatabase(dbconn)
@@ -11,11 +21,18 @@ def add_product(dbconn, Name, Category, Price, QuantityAvailable, ManufactureID)
     price_chk = quantity_chk = manufacture_chk = True
     
     #either the price is not a number or it is a non-positive integer
-    if not(Price.isdigit()) or int(Price)<=0:
+    if not is_valid_price(Price):
         price_chk = False
     #either the quantity is not a number or a non-negative integer
-    if not(QuantityAvailable.isdigit()) or int(QuantityAvailable) < 0:
-        quantity_chk = False
+    try:
+        quantity=int(QuantityAvailable)
+        if quantity <0:
+            quantity_chk=False
+        else:
+            quantity_chk=True
+    except:
+        quantity_chk=False 
+        
     #either manufactureID is not a number, or a non-positive integer or it does not exist in the database
     if not (ManufactureID.isdigit() and int(ManufactureID) > 0 and ManufactureDb.does_manufacture_exist(ManufactureID)): 
         manufacture_chk = False
@@ -34,7 +51,6 @@ def scan_product_barcode(dbconn):
         print("Cannot open camera")
         exit()
 
-    print("Starting webcam. Press 'q' to quit.")
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -50,16 +66,9 @@ def scan_product_barcode(dbconn):
                 cap.release()
                 cv2.destroyAllWindows()
                 return barcode_data
-          
-        # Show webcam feed
-        cv2.imshow("Barcode Scanner", frame)
+        
 
-        # Exit on 'q' key
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
+   
 
 def update_quantity_after_scan(dbconn, productId, new_quantity):
     productDatabase_obj=productDatabase(dbconn)
@@ -71,3 +80,32 @@ def update_quantity_after_scan(dbconn, productId, new_quantity):
     else:
         print("Quantity could not be updated, try again later")
     return True
+
+def delete_product_after_scan (dbconn,productid):
+    productDatabase_obj=productDatabase(dbconn)
+    if productDatabase_obj.delete_product(productid):
+        return True
+
+
+def scan_product(dbconn, detail_list, scanner):
+    productDb = productDatabase(dbconn)
+    # billId = get_latest_billid_from_db(dbconn)
+
+    # read all new scanned product IDs
+    while scanner.is_enqueued():
+        prod_id = scanner.get_enqueued_id()
+
+     
+
+        # fetches product from DB
+        product_tuple = productDb.get_prod_from_id(prod_id)
+        if not product_tuple:
+            return detail_list, False
+        
+        product = Product(*product_tuple)
+
+
+        detail_list.append(product)
+        winsound.Beep(1000,500)
+
+    return detail_list, True
