@@ -55,6 +55,18 @@ CREATE TABLE IF NOT EXISTS BillDetail
  FOREIGN KEY (ProdId) REFERENCES Product(ProdID)
 );
 
+-- Trigger to update product quantity after billing check out
+DELIMITER $$
+CREATE TRIGGER decrement_quantity_on_checkout 
+AFTER INSERT ON BillDetail
+FOR EACH ROW
+BEGIN
+	UPDATE Product
+    SET QuantityAvailable = (QuantityAvailable - NEW.QuantitySold)
+    WHERE ProdID = NEW.ProdID;
+END $$
+DELIMITER ;
+
 INSERT INTO ManufactureDetail (ManufactureName, ContactNumber, Email) VALUES
 ('Alpha Industries', '03001234567', 'alpha@gmail.com'),
 ('Beta Traders', '03017654321', 'beta@gmail.com'),
