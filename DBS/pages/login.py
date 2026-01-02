@@ -146,7 +146,6 @@ def loginPage():
         div.stButton > button:hover {
             background-color: #0047b3;
         }
-
         </style>
         """, unsafe_allow_html=True)
 

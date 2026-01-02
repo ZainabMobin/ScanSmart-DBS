@@ -19,7 +19,6 @@ def validate_login(dbconn, email, password):
     role = employeeDb.get_role_from_id(emp_id)
     return role, emp_id
 
-
 def validate_employee_info(dbconn, Name,Role, ContactNumber, Email, Address, Password):
     employeeDb = employeeDatabase(dbconn)
     email_chk = contact_chk = pass_chk = True

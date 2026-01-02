@@ -13,7 +13,6 @@ import winsound
 cap = cv2.VideoCapture(0)
 detector = cv2.QRCodeDetector()
 
-
 def get_bills_from_db(dbconn, EmployeeID = None): #function overloading for when TOTAL bills are needed vs when a cashier views their own bills
     productDb = productDatabase(dbconn)
     billDb = billDatabase(dbconn)
@@ -92,7 +91,6 @@ def create_bill(detail_list, EmployeeID):
         totalAmount = totalAmount + detail.TotalAmount
     bill = Bill(Date=date, TotalAmount=totalAmount, EmployeeID=EmployeeID)
     return bill
-
 
 def get_latest_billid_from_db(dbconn):
     billDb = billDatabase(dbconn)
