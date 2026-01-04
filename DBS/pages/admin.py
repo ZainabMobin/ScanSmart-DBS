@@ -699,15 +699,15 @@ def show_admin_bills_view():
                     
                     detail_header_cols = st.columns([1.5, 3, 1.5, 1.5, 1.5])
                     with detail_header_cols[0]:
-                        st.markdown("<b style='color:#495057;'>Product ID</b>", unsafe_allow_html=True)
+                        st.markdown("<b style='color:#000000;'>Product ID</b>", unsafe_allow_html=True)
                     with detail_header_cols[1]:
-                        st.markdown("<b style='color:#495057;'>Product Name</b>", unsafe_allow_html=True)
+                        st.markdown("<b style='color:#000000;'>Product Name</b>", unsafe_allow_html=True)
                     with detail_header_cols[2]:
-                        st.markdown("<b style='color:#495057;'>Quantity</b>", unsafe_allow_html=True)
+                        st.markdown("<b style='color:#000000;'>Quantity</b>", unsafe_allow_html=True)
                     with detail_header_cols[3]:
-                        st.markdown("<b style='color:#495057;'>Unit Price</b>", unsafe_allow_html=True)
+                        st.markdown("<b style='color:#000000;'>Unit Price</b>", unsafe_allow_html=True)
                     with detail_header_cols[4]:
-                        st.markdown("<b style='color:#495057;'>Total</b>", unsafe_allow_html=True)
+                        st.markdown("<b style='color:#000000;'>Total</b>", unsafe_allow_html=True)
                     
                     st.markdown(
                         "<hr style='margin: 8px 0; border: 1px solid #dee2e6;'>",
@@ -717,13 +717,13 @@ def show_admin_bills_view():
                     for detail in bill_details:
                         detail_cols = st.columns([1.5, 3, 1.5, 1.5, 1.5])
                         with detail_cols[0]:
-                            st.markdown(f"<p style='margin:5px 0;'>{detail[0]}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='color:#000000;margin:5px 0;'>{detail[0]}</p>", unsafe_allow_html=True)
                         with detail_cols[1]:
-                            st.markdown(f"<p style='margin:5px 0;'>{detail[1]}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='color:#000000;margin:5px 0;'>{detail[1]}</p>", unsafe_allow_html=True)
                         with detail_cols[2]:
-                            st.markdown(f"<p style='margin:5px 0; text-align:center;'>{detail[2]}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='color:#000000;margin:5px 0; text-align:center;'>{detail[2]}</p>", unsafe_allow_html=True)
                         with detail_cols[3]:
-                            st.markdown(f"<p style='margin:5px 0;'>PKR {detail[3]:.2f}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='color:#000000;margin:5px 0;'>PKR {detail[3]:.2f}</p>", unsafe_allow_html=True)
                         with detail_cols[4]:
                             st.markdown(f"<p style='color:#0066FF; font-weight:600; margin:5px 0;'>PKR {detail[4]:.2f}</p>", unsafe_allow_html=True)
                         st.markdown(
