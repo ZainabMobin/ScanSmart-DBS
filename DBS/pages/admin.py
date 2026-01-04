@@ -12,6 +12,7 @@ from services.analyticalService import plot_daily_sales_trend,plot_employee_perf
 
 import time
 import matplotlib.pyplot as plt
+K_RESULTS = 10
 
 dbconn=connect_db()
 billDatabase_obj = billDatabase(dbconn)
@@ -593,6 +594,7 @@ def admin_scan_product():
         time.sleep(0.5)
         st.rerun()
 
+
 #----------admin_bill_detail-----------
 def show_admin_bills_view():
 
@@ -612,7 +614,23 @@ def show_admin_bills_view():
             </div>
         """, unsafe_allow_html=True)
         return
-    
+     # 🆕 🔽 Initialize pagination state
+    if "admin_bill_page" not in st.session_state:
+        st.session_state.admin_bill_page = 1
+
+    total_bills = len(all_bills)
+    total_pages = (total_bills + K_RESULTS - 1) // K_RESULTS
+
+    # Clamp page safely
+    st.session_state.admin_bill_page = max(
+        1, min(st.session_state.admin_bill_page, total_pages)
+    )
+
+    # Slice bills for current page
+    start = (st.session_state.admin_bill_page - 1) * K_RESULTS
+    end = start + K_RESULTS
+    paged_bills = all_bills[start:end]
+
     bills_container = st.container()
     with bills_container:
         # Header row with column names
@@ -627,12 +645,15 @@ def show_admin_bills_view():
             st.markdown("<b style='color:black;'>Total Amount</b>", unsafe_allow_html=True)
         with header_cols[4]:
             st.markdown("<b style='color:black;'>Cashier ID</b>", unsafe_allow_html=True)
-       
-        st.markdown("<hr style='margin: 10px 0; border: 1px solid #e0e0e0;'>", unsafe_allow_html=True)
 
-        # Display each bill 
-        for bill in all_bills:
-            bill_id = bill[0] #the first part of every bill is bill id
+        st.markdown(
+            "<hr style='margin: 10px 0; border: 1px solid #e0e0e0;'>",
+            unsafe_allow_html=True
+        )
+
+        # loop over and Display ONLY paged bills
+        for bill in paged_bills:
+            bill_id = bill[0]
             is_expanded = bill_id in st.session_state.expanded_admin_bills
             
             cols = st.columns([1, 1.5, 3, 1.4, 1.5, 0.1])
@@ -648,31 +669,34 @@ def show_admin_bills_view():
             with cols[4]:
                 st.markdown(f'<p style="color:black; margin:0; padding-top:8px;">{bill[4]}</p>', unsafe_allow_html=True)
             with cols[5]:
-                # Custom toggle button
                 button_label = "🔽" if not is_expanded else "🔼"
-                if st.button(button_label, key=f"toggle_admin_bill_{bill_id}", use_container_width=True):
+                if st.button(
+                    button_label,
+                    key=f"toggle_admin_bill_{bill_id}",
+                    use_container_width=True
+                ):
                     if bill_id in st.session_state.expanded_admin_bills:
                         st.session_state.expanded_admin_bills.remove(bill_id)
                     else:
                         st.session_state.expanded_admin_bills.add(bill_id)
                     st.rerun()
             
-            # Show details if expanded
+            # Show details if expanded (UNCHANGED)
             if is_expanded:
-                # Get bill details from database
                 bill_details = billDatabase_obj.get_bill_detail_admin(bill_id)
                 
                 if bill_details:
-                    # Container for bill details
                     st.markdown("""
                         <div style='background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
                                     padding: 5px; border-radius: 10px; margin: 10px 0 20px 0; 
                                     border-left: 4px solid #0066FF; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
                     """, unsafe_allow_html=True)
                     
-                    st.markdown(f"<h4 style='color:#0066FF; margin-bottom: 15px;'>Bill Details -{bill_id:03d}</h4>", unsafe_allow_html=True)
+                    st.markdown(
+                        f"<h4 style='color:#0066FF; margin-bottom: 15px;'>Bill Details -{bill_id:03d}</h4>",
+                        unsafe_allow_html=True
+                    )
                     
-                    # Details header
                     detail_header_cols = st.columns([1.5, 3, 1.5, 1.5, 1.5])
                     with detail_header_cols[0]:
                         st.markdown("<b style='color:#495057;'>Product ID</b>", unsafe_allow_html=True)
@@ -685,28 +709,64 @@ def show_admin_bills_view():
                     with detail_header_cols[4]:
                         st.markdown("<b style='color:#495057;'>Total</b>", unsafe_allow_html=True)
                     
-                    st.markdown("<hr style='margin: 8px 0; border: 1px solid #dee2e6;'>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<hr style='margin: 8px 0; border: 1px solid #dee2e6;'>",
+                        unsafe_allow_html=True
+                    )
                     
-                    # Display each product in the bill
                     for detail in bill_details:
                         detail_cols = st.columns([1.5, 3, 1.5, 1.5, 1.5])
                         with detail_cols[0]:
-                            st.markdown(f"<p style='color:#212529; margin:5px 0;'>{detail[0]}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='margin:5px 0;'>{detail[0]}</p>", unsafe_allow_html=True)
                         with detail_cols[1]:
-                            st.markdown(f"<p style='color:#212529; margin:5px 0;'>{detail[1]}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='margin:5px 0;'>{detail[1]}</p>", unsafe_allow_html=True)
                         with detail_cols[2]:
-                            st.markdown(f"<p style='color:#212529; margin:5px 0; text-align:center;'>{detail[2]}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='margin:5px 0; text-align:center;'>{detail[2]}</p>", unsafe_allow_html=True)
                         with detail_cols[3]:
-                            st.markdown(f"<p style='color:#212529; margin:5px 0;'>PKR {detail[3]:.2f}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='margin:5px 0;'>PKR {detail[3]:.2f}</p>", unsafe_allow_html=True)
                         with detail_cols[4]:
                             st.markdown(f"<p style='color:#0066FF; font-weight:600; margin:5px 0;'>PKR {detail[4]:.2f}</p>", unsafe_allow_html=True)
-                        st.markdown("<hr style='margin: 5px 0; border: 0.5px solid #dee2e6;'>", unsafe_allow_html=True)
+                        st.markdown(
+                            "<hr style='margin: 5px 0; border: 0.5px solid #dee2e6;'>",
+                            unsafe_allow_html=True
+                        )
                     
                     st.markdown("</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown("<p style='color:#999; font-style:italic;'>No details available for this bill</p>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<p style='color:#999; font-style:italic;'>No details available for this bill</p>",
+                        unsafe_allow_html=True
+                    )
             
-            st.markdown("<hr style='margin: 8px 0; border: 0.5px solid #f0f0f0;'>", unsafe_allow_html=True)
+            st.markdown(
+                "<hr style='margin: 8px 0; border: 0.5px solid #f0f0f0;'>",
+                unsafe_allow_html=True
+            )
+
+        # Pagination controls (bottom)
+        st.markdown("<br>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1,2,1])
+        
+        with col1:
+            if st.session_state.admin_bill_page > 1:
+                if st.button("⬅ Previous"):
+                    st.session_state.admin_bill_page -= 1
+                    st.rerun()
+
+        with col2:
+            st.markdown(
+                f"<p style='text-align:center; color:#333;'>"
+                f"Page {st.session_state.admin_bill_page} of {total_pages}"
+                f"</p>",
+                unsafe_allow_html=True
+            )
+
+        with col3:
+            if st.session_state.admin_bill_page < total_pages:
+                if st.button("Next ➡"):
+                    st.session_state.admin_bill_page += 1
+                    st.rerun()
+
 
 def admin_manage_products():
     st.markdown('<h3 style="color:#0066FF; margin-bottom: 20px;">Product Management</h3>', unsafe_allow_html=True)
@@ -844,14 +904,31 @@ def admin_employee_details():
         if st.button("Add Employee",key="admin_add_employee"):
             add_employee()
     all_employee_details=employeeDatabase_obj.get_employee_details()
+
     if not all_employee_details:
         st.markdown("""
             <div style="background-color: white; padding: 40px; text-align:center; border-radius: 10px; margin-top: 20px;">
                 <p style="color:#666; margin:0; font-size: 18px;">No employee detail found</p>
             </div>
         """, unsafe_allow_html=True)
-        return
-    
+        return    
+
+    # PAGINATION: initialize page state
+    if "employee_page" not in st.session_state:
+        st.session_state.employee_page = 0
+
+    total_employees = len(all_employee_details)
+    total_pages = (total_employees + K_RESULTS - 1) // K_RESULTS
+
+    # Clamp page safely
+    st.session_state.employee_page = max(
+        1, min(st.session_state.employee_page, total_pages)
+    )
+
+    start = (st.session_state.employee_page -1 ) * K_RESULTS
+    end = start + K_RESULTS
+    paginated_employees = all_employee_details[start:end]
+
     employee_container = st.container()
     with employee_container:
         # Header row with column names
@@ -868,7 +945,9 @@ def admin_employee_details():
             st.markdown("<b style='color:black;'>Email</b>", unsafe_allow_html=True)
        
         st.markdown("<hr style='margin: 10px 0; border: 1px solid #e0e0e0;'>", unsafe_allow_html=True)
-        for employee_detail in all_employee_details:
+            
+        #loop and display only rendered rows
+        for employee_detail in paginated_employees:
             
             cols = st.columns([1, 1, 1, 1.2, 1.7])
             
@@ -884,6 +963,30 @@ def admin_employee_details():
                 st.markdown(f'<p style="color:black; margin:0; padding-top:8px;">{employee_detail[4]}</p>', unsafe_allow_html=True)
             
             st.markdown("<hr style='margin: 8px 0; border: 0.5px solid #f0f0f0;'>", unsafe_allow_html=True)
+        
+        # Pagination controls (bottom)
+        st.markdown("<br>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1,2,1])
+        
+        with col1:
+            if st.session_state.employee_page > 1:
+                if st.button("⬅ Previous"):
+                    st.session_state.employee_page -= 1
+                    st.rerun()
+        with col2:
+            st.markdown(
+                f"<p style='text-align:center; color:#333;'>"
+                f"Page {st.session_state.employee_page} of {total_pages}"
+                f"</p>",
+                unsafe_allow_html=True
+            )
+        with col3:
+            if st.session_state.employee_page < total_pages:
+                if st.button("Next ➡"):
+                    st.session_state.employee_page += 1
+                    st.rerun()
+
+
 @st.dialog("Add employee in database")
 def add_employee():
 
@@ -922,10 +1025,12 @@ def add_employee():
             time.sleep(1)
             st.rerun()
 
+
 def admin_manufacturer_details():
-     
+
     st.markdown('<h3 style="color:#333;margin-bottom:20px;">Maufacturer Details</h3>', unsafe_allow_html=True)
-    all_manufacturer_details=manufactureDatabase_obj.manufacturesDetail()
+    all_manufacturer_details = manufactureDatabase_obj.manufacturesDetail()
+
     if not all_manufacturer_details:
         st.markdown("""
             <div style="background-color: white; padding: 40px; text-align:center; border-radius: 10px; margin-top: 20px;">
@@ -933,35 +1038,70 @@ def admin_manufacturer_details():
             </div>
         """, unsafe_allow_html=True)
         return
-    
+
+    # PAGINATION STATE
+    if "manufacturer_page" not in st.session_state:
+        st.session_state.manufacturer_page = 0
+
+    total_manufacturers = len(all_manufacturer_details)
+    total_pages = (total_manufacturers + K_RESULTS - 1) // K_RESULTS
+
+    # Clamp page safely
+    st.session_state.manufacturer_page = max(
+        1, min(st.session_state.manufacturer_page, total_pages)
+    )
+
+    start = (st.session_state.manufacturer_page - 1)* K_RESULTS
+    end = start + K_RESULTS
+    paginated_manufacturers = all_manufacturer_details[start:end]
+
     manufacturer_container = st.container()
     with manufacturer_container:
-        # Header row with column names
-        header_cols = st.columns([1, 1,1.4,1.5])
-        with header_cols[0]:
-            st.markdown("<b style='color:black;'>Manufacturer ID</b>", unsafe_allow_html=True)
-        with header_cols[1]:
-            st.markdown("<b style='color:black;'>Manufacturer Name</b>", unsafe_allow_html=True)
-        with header_cols[2]:
-            st.markdown("<b style='color:black;'>Contact Number</b>", unsafe_allow_html=True)
-        with header_cols[3]:
-            st.markdown("<b style='color:black;'>Email</b>", unsafe_allow_html=True)
-       
+        # Header row
+        header_cols = st.columns([1, 1, 1.4, 1.5])
+        header_cols[0].markdown("<b style='color:black;'>Manufacturer ID</b>", unsafe_allow_html=True)
+        header_cols[1].markdown("<b style='color:black;'>Manufacturer Name</b>", unsafe_allow_html=True)
+        header_cols[2].markdown("<b style='color:black;'>Contact Number</b>", unsafe_allow_html=True)
+        header_cols[3].markdown("<b style='color:black;'>Email</b>", unsafe_allow_html=True)
+
         st.markdown("<hr style='margin: 10px 0; border: 1px solid #e0e0e0;'>", unsafe_allow_html=True)
-        for manufacturer_detail in all_manufacturer_details:
-            
+
+        # DISPLAY ONLY CURRENT PAGE ROWS IN LOOP
+        for manufacturer_detail in paginated_manufacturers:
             cols = st.columns([1, 1, 1.4, 1.5])
-            
-            with cols[0]:
-                st.markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[0]}</p>', unsafe_allow_html=True)
-            with cols[1]:
-                st.markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[1]}</p>', unsafe_allow_html=True)
-            with cols[2]:
-                st.markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[2]}</p>', unsafe_allow_html=True)
-            with cols[3]:
-                st.markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[3]}</p>', unsafe_allow_html=True)
-            
+
+            cols[0].markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[0]}</p>', unsafe_allow_html=True)
+            cols[1].markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[1]}</p>', unsafe_allow_html=True)
+            cols[2].markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[2]}</p>', unsafe_allow_html=True)
+            cols[3].markdown(f'<p style="color:black; margin:0; padding-top:8px;">{manufacturer_detail[3]}</p>', unsafe_allow_html=True)
+
             st.markdown("<hr style='margin: 8px 0; border: 0.5px solid #f0f0f0;'>", unsafe_allow_html=True)
+
+        
+        # Pagination controls (bottom)
+        st.markdown("<br>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1,2,1])
+        
+        with col1:
+            if st.session_state.manufacturer_page > 1:
+                if st.button("⬅ Previous"):
+                    st.session_state.manufacturer_page -= 1
+                    st.rerun()
+
+        with col2:
+            st.markdown(
+                f"<p style='text-align:center; color:#333;'>"
+                f"Page {st.session_state.manufacturer_page} of {total_pages}"
+                f"</p>",
+                unsafe_allow_html=True
+            )
+
+        with col3:
+            if st.session_state.manufacturer_page < total_pages:
+                if st.button("Next ➡"):
+                    st.session_state.manufacturer_page += 1
+                    st.rerun()
+
 
 def admin_analytics(): 
     st.markdown('<h3 style="color:#333;margin-bottom:20px;">Admin Analytics</h3>', unsafe_allow_html=True)
