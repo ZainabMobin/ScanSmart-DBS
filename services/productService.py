@@ -1,8 +1,8 @@
 from databases.productDatabase import productDatabase
 from databases.manufactureDatabase import manufactureDatabase 
+from services.soundServiceSingleton import soundServiceSingleton
 from models.Product import Product
 import cv2
-import winsound
 from pyzbar import pyzbar
 
 
@@ -63,7 +63,8 @@ def scan_product_barcode(dbconn):
         for barcode in barcodes:
             barcode_data = barcode.data.decode('utf-8')
             print(f"Scanned Product ID: {barcode_data}")
-            winsound.Beep(1000,500)
+            soundServiceSingleton.play_sound(1000, 500)
+
             if (productDatabase_obj.finding_prod(int(barcode_data))):
                 cap.release()
                 cv2.destroyAllWindows()
@@ -103,6 +104,6 @@ def scan_product(dbconn, detail_list, scanner):
         
         product = Product(*product_tuple)
         detail_list.append(product)
-        winsound.Beep(1000,500)
+        soundServiceSingleton.play_sound(1000, 500)  
 
     return detail_list, True

@@ -5,10 +5,10 @@ from databases.employeeDatabase import employeeDatabase
 from databases.billDatabase import billDatabase
 from databases.productDatabase import productDatabase
 from services.scannerService import ScannerService
+from services.soundServiceSingleton import soundServiceSingleton
 from collections import defaultdict #to create dict of bill details grouped by BillID
 from datetime import datetime #to create data in the correct format
 import cv2 #for camera scanning, additionally installed libs are qrcode, opencv
-import winsound
 
 cap = cv2.VideoCapture(0)
 detector = cv2.QRCodeDetector()
@@ -61,7 +61,7 @@ def scan_bill(dbconn, detail_list, scanner, seen_set):
 
         detail_list.append(billDetail)
         print(f"appended billdetail: {billDetail.BillID} {billDetail.QuantitySold} {billDetail.UnitPrice} {billDetail.TotalAmount}")
-        winsound.Beep(1000,500)
+        soundServiceSingleton.play_sound(1000, 500)
 
     return detail_list, True
 
