@@ -1,1 +1,0 @@
-All Data formatting, encryption/decryption and business logic is applied in the service layer

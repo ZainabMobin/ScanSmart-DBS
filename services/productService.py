@@ -14,8 +14,6 @@ def is_valid_price(value):
     except ValueError:
         return False
 
-# Usage:
-
 
 def add_product(dbconn, Name, Category, Price, QuantityAvailable, ManufactureID):
     productDb = productDatabase(dbconn)
@@ -72,7 +70,6 @@ def scan_product_barcode(dbconn):
                 return barcode_data
         
 
-
 def update_quantity_after_scan(dbconn, productId, new_quantity):
     productDatabase_obj=productDatabase(dbconn)
     if not new_quantity.isdigit() or int(new_quantity)<0:
@@ -83,6 +80,7 @@ def update_quantity_after_scan(dbconn, productId, new_quantity):
     else:
         print("Quantity could not be updated, try again later")
     return True
+
 
 #helper function to delete a product
 def delete_product_after_scan (dbconn,productid):

@@ -1,6 +1,12 @@
 CREATE DATABASE IF NOT EXISTS INVENTORY_MANAGEMENT;
 USE INVENTORY_MANAGEMENT;
 
+-- No need for 'CREATE DATABASE' as Docker creates the
+-- database automatically when establishing connection 
+-- (gets name via the .env variable)
+-- The connection is ALWAYS directed to that database
+-- so no need for 'USE database_name'. (USE <name> is idempotent)
+
 CREATE TABLE IF NOT EXISTS ManufactureDetail
 (
  ManufactureID INT PRIMARY KEY AUTO_INCREMENT,
