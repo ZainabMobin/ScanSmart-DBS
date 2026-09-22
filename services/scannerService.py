@@ -57,3 +57,7 @@ class ScannerService:
 
     def stop_scanner(self):
         self.camera_on = False
+
+
+def decode_frame(frame):
+    return decode(frame)

@@ -9,15 +9,19 @@ def validate_login(dbconn, email, password):
     #email exists
     if not employeeDb.check_email_exists(email):
         return "Not Found", -1
+        
+    try:
+        #password matches email 
+        if not check_password(email, password, employeeDb):
+            return "Not Found", -1
+    except ValueError:
+        print('Encountered Value Error: ', ValueError.with_traceback)
     
-    #password matches email 
-    if not check_password(email, password, employeeDb):
-        return "Not Found", -1
-   
     #Employee is valid, send role with emp_id
     emp_id = employeeDb.get_id_by_email(email)
     role = employeeDb.get_role_from_id(emp_id)
     return role, emp_id
+
 
 def validate_employee_info(dbconn, Name,Role, ContactNumber, Email, Address, Password):
     employeeDb = employeeDatabase(dbconn)
@@ -29,6 +33,7 @@ def validate_employee_info(dbconn, Name,Role, ContactNumber, Email, Address, Pas
     if not (len(Password) >= 7 and any(c.isdigit() for c in Password) and any(c.islower() for c in Password)):
         pass_chk = False
 
+    # Demoivre's theorem!
     if not (email_chk and contact_chk and pass_chk):
         return email_chk, contact_chk, pass_chk
     
@@ -41,7 +46,7 @@ def validate_employee_info(dbconn, Name,Role, ContactNumber, Email, Address, Pas
 
 def check_password( email, password, employeeDb):
     encrypted_password = employeeDb.get_password_from_email(email)
-    return bcrypt.checkpw(password.encode('utf-8'), encrypted_password.encode('utf-8')) #returns true of false
+    return bcrypt.checkpw(password.encode('utf-8'), encrypted_password.encode('utf-8')) #returns true or false
 
 
 def encrypt_password(password):

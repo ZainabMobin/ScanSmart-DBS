@@ -793,11 +793,11 @@ def admin_add_products():
     st.markdown('<p style="color:#0066FF; margin-bottom: 20px;">Enter the product details below</p>', unsafe_allow_html=True)
     
     with st.container():
-        Name = st.text_input("",placeholder="Product Name",key="new_product_name")
-        Category = st.text_input("",placeholder="Category",key="new_product_category")
-        Price = st.text_input("",placeholder="Price",key="new_product_price")
-        Quantity = st.text_input("",placeholder="Quantity",key="new_product_quantity")
-        ManufactureID = st.text_input("",placeholder="Manufacture ID:",key="new_product_manufactureID")
+        Name = st.text_input(label="product-name", value="",placeholder="Product Name",key="new_product_name")
+        Category = st.text_input(label="product-category", value="",placeholder="Category",key="new_product_category")
+        Price = st.text_input(label="product-price", value="",placeholder="Price",key="new_product_price")
+        Quantity = st.text_input(label="product-quantity", value="",placeholder="Quantity",key="new_product_quantity")
+        ManufactureID = st.text_input(label="product-manufacture-id", value="",placeholder="Manufacture ID:",key="new_product_manufactureID")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -839,7 +839,7 @@ def admin_update_product():
     if st.session_state.scanned_product_id:
         st.success(f"Product: {st.session_state.scanned_product_id}")
         
-        new_quantity = st.text_input("", placeholder="New quantity", key="new_qty")
+        new_quantity = st.text_input(label="new-quantity", value="", placeholder="New quantity", key="new_qty")
         
         col1, col2 = st.columns(2)
         with col1:
@@ -994,12 +994,12 @@ def add_employee():
     st.markdown('<p style="color:#0066FF; margin-bottom: 20px;">Enter the employee details below</p>', unsafe_allow_html=True)
     
     with st.container():
-        Name = st.text_input("",placeholder="Full Name",key="new_employee_name")
+        Name = st.text_input(label="cashier-name", value="",placeholder="Full Name",key="new_employee_name")
         Role = st.selectbox("Role", ["Cashier", "Admin"], key="new_employee_role")
-        ContactNumber = st.text_input("",placeholder="Contact Number",key="new_employee_contact_number")
-        Email = st.text_input("",placeholder="Email",key="new_employee_email")
-        Address = st.text_input("",placeholder="Address",key="new_employee_address")
-        Password = st.text_input("",placeholder="Password", key="new_employee_password",type="password")
+        ContactNumber = st.text_input(label="cashier-contact", value="",placeholder="Contact Number",key="new_employee_contact_number")
+        Email = st.text_input(label="cashier-email", value="",placeholder="Email",key="new_employee_email")
+        Address = st.text_input(label="cashier-address", value="",placeholder="Address",key="new_employee_address")
+        Password = st.text_input(label="cashier-password", value="",placeholder="Password", key="new_employee_password",type="password")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -1029,7 +1029,7 @@ def add_employee():
 def admin_manufacturer_details():
 
     st.markdown('<h3 style="color:#333;margin-bottom:20px;">Maufacturer Details</h3>', unsafe_allow_html=True)
-    all_manufacturer_details = manufactureDatabase_obj.manufacturesDetail()
+    all_manufacturer_details = manufactureDatabase_obj.get_manufacture_detail()
 
     if not all_manufacturer_details:
         st.markdown("""

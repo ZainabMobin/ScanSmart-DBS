@@ -5,27 +5,27 @@ USE INVENTORY_MANAGEMENT;
 -- database automatically when establishing connection 
 -- (gets name via the .env variable)
 -- The connection is ALWAYS directed to that database
--- so no need for 'USE database_name'. (USE <name> is idempotent)
+-- so no need for 'USE database_name'. (USE <name> is idempotent anyway)
 
 CREATE TABLE IF NOT EXISTS ManufactureDetail
 (
- ManufactureID INT PRIMARY KEY AUTO_INCREMENT,
- ManufactureName VARCHAR(255) NOT NULL,
- ContactNumber VARCHAR(255) NOT NULL,
- Email VARCHAR(100)
- );
+  ManufactureID INT PRIMARY KEY AUTO_INCREMENT,
+  ManufactureName VARCHAR(255) NOT NULL,
+  ContactNumber VARCHAR(255) NOT NULL,
+  Email VARCHAR(100)
+);
 CREATE TABLE IF NOT EXISTS Product 
 (
- ProdID INT PRIMARY KEY AUTO_INCREMENT,
- Name VARCHAR(255) NOT NULL,
- Category VARCHAR(100),
- Price DECIMAL(10,2) NOT NULL,
- QuantityAvailable INT NOT NULL,
- ManufactureID INT NOT NULL,
- FOREIGN KEY (ManufactureID) REFERENCES ManufactureDetail(ManufactureID)
+  ProdID INT PRIMARY KEY AUTO_INCREMENT,
+  Name VARCHAR(255) NOT NULL,
+  Category VARCHAR(100),
+  Price DECIMAL(10,2) NOT NULL,
+  QuantityAvailable INT NOT NULL,
+  ManufactureID INT NOT NULL,
+  FOREIGN KEY (ManufactureID) REFERENCES ManufactureDetail(ManufactureID)
 );
- CREATE TABLE IF NOT EXISTS Employee
- (
+CREATE TABLE IF NOT EXISTS Employee
+(
   EmployeeID INT PRIMARY KEY AUTO_INCREMENT,
   Name VARCHAR(255) NOT NULL,
   Role ENUM("Admin","Cashier") NOT NULL,
@@ -38,27 +38,24 @@ CREATE TABLE IF NOT EXISTS Product
 
 CREATE TABLE IF NOT EXISTS Bill
 (
- BillID INT PRIMARY KEY AUTO_INCREMENT,
- CustomerName VARCHAR(255) NOT NULL,
- Date DATETIME  NOT NULL,
- TotalAmount DECIMAL(10,2)NOT NULL,
- EmployeeID INT NOT NULL,
- FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
- 
-
+  BillID INT PRIMARY KEY AUTO_INCREMENT,
+  CustomerName VARCHAR(255) NOT NULL,
+  Date DATETIME  NOT NULL,
+  TotalAmount DECIMAL(10,2)NOT NULL,
+  EmployeeID INT NOT NULL,
+  FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
 );
-
 
 CREATE TABLE IF NOT EXISTS BillDetail
 (
- BillDetailID INT PRIMARY KEY AUTO_INCREMENT,
- BillID INT NOT NULL,
- ProdID INT NOT NULL,
- QuantitySold INT,
- UnitPrice DECIMAL(10,2) NOT NULL,
- TotalAmount DECIMAL(10,2) NOT NULL,
- FOREIGN KEY (BillID) REFERENCES Bill(BillID),
- FOREIGN KEY (ProdId) REFERENCES Product(ProdID)
+  BillDetailID INT PRIMARY KEY AUTO_INCREMENT,
+  BillID INT NOT NULL,
+  ProdID INT NOT NULL,
+  QuantitySold INT,
+  UnitPrice DECIMAL(10,2) NOT NULL,
+  TotalAmount DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (BillID) REFERENCES Bill(BillID),
+  FOREIGN KEY (ProdID) REFERENCES Product(ProdID)
 );
 
 INSERT INTO ManufactureDetail (ManufactureName, ContactNumber, Email) VALUES
@@ -97,21 +94,21 @@ INSERT INTO Product (Name, Category, Price, QuantityAvailable, ManufactureID) VA
 ('Toothpaste 120g', 'Grocery', 180.00, 140, 4);
 
 INSERT INTO Employee (Name, Role, ContactNumber, Email, Address, HireDate, Password) VALUES
-('Ali Raza', 'Cashier', '03001112222', 'ali@shop.com', 'Lahore', '2023-01-10','$2b$12$uM5MOi6PoEvex4hnbjbYIOLXcWSnofdYP7AqugTj9csVygQ5HwpLG'),
-('Ahmed Khan', 'Cashier', '03005554433', 'ahmed@shop.com', 'Karachi', '2023-02-15', '$2b$12$oQgiUiz1cJhNWIrUpJdozuvy/uz21ekQzqDvRahTX7LsSlzFr6odC'),
-('Sara Malik', 'Cashier', '03112223344', 'sara@shop.com', 'Islamabad', '2023-03-05', '$2b$12$SiT54wT4wGNtiVnB.QgfNey2gduvRXgZi1RR8EEHJKv9V0s7QYNj2'),
-('Hassan Tariq', 'Cashier', '03224445566', 'hassan@shop.com', 'Multan', '2023-03-20', '$2b$12$K0pWbLl.EVm.EX6REy2WMuAgAc92bLxeQeP7FwCpFBAYCmGDUT3n6'),
-('Fatima Noor', 'Cashier', '03336667788', 'fatima@shop.com', 'Sialkot', '2023-04-01', '$2b$12$UWgh7aECFia9qqASlE98IuY.kjTEdfyq7yMnAaNhg.nI6Y.Nba2SW'),
-('Bilal Yousaf', 'Cashier', '03447778899', 'bilal@shop.com', 'Rawalpindi', '2023-04-15', '$2b$12$sLU5WLd3I64y0XThhquTIOvMYdQkS42E7QRM7hUKDKJaIAvRDO6pm'),
-('Zain Ali', 'Cashier', '03119998877', 'zain@shop.com', 'Peshawar', '2023-05-01', '$2b$12$zU/UWxxfY/z9J4U5LwXVF.o/ZUfOvcUgJYEEd7LorSTfLyhLjMSFu'),
-('Hadiqa Ansar', 'Cashier', '03225556677', 'hadiqa@shop.com', 'Quetta', '2023-05-15', '$2b$12$bOxknzBEbqmsR/wTxOKk7.TL8g3H9eEoqdn9RYA5bZZRqua.6CJmu'),
-('Noman Bashir', 'Admin', '03324446655', 'noman@shop.com', 'Faisalabad', '2023-06-01', '$2b$12$MgS7SSpgvW5wRNHgwCCwN.4jutyEqgl1w8C1D.CtUlDmpqRnVP5Y6'),
-('Maryam Fatima', 'Admin', '03423334455', 'maryam@shop.com', 'Lahore', '2023-06-20', '$2b$12$ZCQsdM0Y4xxGf33dwumDXuWG0yG7GDxtHS9yqR31qYJJdiqVskkge'),
-('Usman Shah', 'Admin', '03017778899', 'usman@shop.com', 'Karachi', '2023-07-01', '$2b$12$P5oasyc/8SnudCPntAOT9uwZilaR/pW4m4ljFkdnmMhUXPtRw.UwS'),
-('Saad Ahmed', 'Admin', '03135554477', 'saad@shop.com', 'Islamabad', '2023-07-10', '$2b$12$DUDgfw3q6US4YzhEeCwnGevjY6dnTRvwKyKFX5XcgH8g.1iskj7Yy'),
-('Maham Arif', 'Admin', '03231112233', 'maham@shop.com', 'Multan', '2023-08-01', '$2b$12$9pVJ3Xv/rmSvnf6Tm1RHieDxNNDSwyxGJFNXbIN2ogCLPPxcQjnIS'),
-('Imran Butt', 'Admin', '03335554466', 'imran@shop.com', 'Kasur', '2023-08-15', '$2b$12$asTdREUE/38Pc495FF4v7OhcpH4M0wfu6.X8Uu8uA0FQsACAaiH36'),
-('Ayesha Khan', 'Admin', '03431112221', 'ayesha@shop.com', 'Gujranwala', '2023-09-01', '$2b$12$5IpsfheF6IqwtPGDB8BmPuUcCYOwpLtaliTVy.rdnZvjILId99Eha');
+('Ali Raza', 'Cashier', '03001112222', 'ali@shop.com', 'Lahore', '2023-01-10','$2a$12$8vH/882G2s1sQzujWosmwedzCV5/VKQsgYr3U/v/YouKALboSEbzS'), -- Cashier1
+('Ahmed Khan', 'Cashier', '03005554433', 'ahmed@shop.com', 'Karachi', '2023-02-15', '$2a$12$xQawyLV.qHq/Y4M8lRoirOADTjCrE680oyD51WH5RQaWfC24TMyLS'), -- Cashier2
+('Sara Malik', 'Cashier', '03112223344', 'sara@shop.com', 'Islamabad', '2023-03-05', '$2a$12$ouKgEI/JLQfDZ0J9eVJ5XO7FrEAV1q5yzG4lx1AZXbnXqeYo7y/bC'), -- Cashier3
+('Hassan Tariq', 'Cashier', '03224445566', 'hassan@shop.com', 'Multan', '2023-03-20', '$2a$12$t3ETyCJmfFhWZ.u4wdhdFO2pDWYam1x2GC0040vGoGizidpv6NI/W'), -- Cashier4
+('Fatima Noor', 'Cashier', '03336667788', 'fatima@shop.com', 'Sialkot', '2023-04-01', '$2a$12$QIBzpFjWNntwuYrLggue8uM90L69DHQ1TXtHKPS2O6rWjrbWIQ6e.'), -- Cashier5
+('Bilal Yousaf', 'Cashier', '03447778899', 'bilal@shop.com', 'Rawalpindi', '2023-04-15', '$2a$12$AcrGWj/yxPTubZcbcNpDh.D3pimf1u1DJAgn.PgQqOkt.vTEDw6hi'), -- Cashier6
+('Zain Ali', 'Cashier', '03119998877', 'zain@shop.com', 'Peshawar', '2023-05-01', '$2a$12$oyaotAFJthhgLBF8JMtCzuoad.BdsIclqUTel2b6T0mx3yvDbKwIS'), -- Cashier7
+('Hadiqa Ansar', 'Cashier', '03225556677', 'hadiqa@shop.com', 'Quetta', '2023-05-15', '$2a$12$jWjkv7FoAvsTVzEJFCAvBOv4Z48hZjdnJBJkTsTVxoknEmPQVvwOO'), -- Cashier8
+('Noman Bashir', 'Admin', '03324446655', 'noman@shop.com', 'Faisalabad', '2023-06-01', '$2a$12$kcsJP3WYInejoQr32QYvO.nhZvWN6OwMsiH1bcdeWED9rjnZDd3Re'), -- Admin1
+('Maryam Fatima', 'Admin', '03423334455', 'maryam@shop.com', 'Lahore', '2023-06-20', '$2a$12$U4nhQA8MQ2v0Sqyk50HKkOdAhrxpDn.FO1aLf35aoUwp.iTaDExei'), -- Admin2
+('Usman Shah', 'Admin', '03017778899', 'usman@shop.com', 'Karachi', '2023-07-01', '$2a$12$DAJG.grsQpxjd1wPVuAr8eag8O9lvkdYqXwxwLpeHiPXogAf6Xg8m'), -- Admin3
+('Saad Ahmed', 'Admin', '03135554477', 'saad@shop.com', 'Islamabad', '2023-07-10', '$2a$12$Y8HVy7pLlEGYyeKTej.dx.RB3x4o45v0h3hZn/rcRwoRwZ6cmdBB.'), -- Admin4
+('Maham Arif', 'Admin', '03231112233', 'maham@shop.com', 'Multan', '2023-08-01', '$2a$12$GcjJ6Fbp3/oPXitKRvSjreFyWWpcpZp89JI5I1ga8tLXDYsIvFZeG'), -- Admin5
+('Imran Butt', 'Admin', '03335554466', 'imran@shop.com', 'Kasur', '2023-08-15', '$2a$12$ok/LxWFFy9BZMxIAu7kq9uQPgkwaCmHjJ610ueYbzzlmaCeJrUDMq'), -- Admin6
+('Ayesha Khan', 'Admin', '03431112221', 'ayesha@shop.com', 'Gujranwala', '2023-09-01', '$2a$12$mfocmAujJyQpqYzu9OIc2Oc6NKh4tgq8O6WwjUd04w.P/uk4VhGWO'); -- Admin7
 
 
 INSERT INTO Bill (CustomerName, Date, TotalAmount, EmployeeID) VALUES

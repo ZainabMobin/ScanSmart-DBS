@@ -423,7 +423,7 @@ def show_billing_active_page():
             # Customer Name Input
             st.markdown('<p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color:#0066FF;">Customer Name</p>', 
                         unsafe_allow_html=True)
-            customer_name = st.text_input("", placeholder="Enter customer name", 
+            customer_name = st.text_input(label="customer-name", value="", placeholder="Enter customer name", 
                                             label_visibility="collapsed", key="customer_name")
             
             st.markdown("<br>", unsafe_allow_html=True)

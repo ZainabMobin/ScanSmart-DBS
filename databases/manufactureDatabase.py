@@ -3,16 +3,17 @@ class manufactureDatabase:
     def __init__(self,dbconn):
         self.dbconn=dbconn
 
-    def manufacturesDetail(self):
+    def get_manufacture_detail(self):
         cursor=self.dbconn.cursor()
-        query="SELECT * FROM manufacturedetail"
+        query = "SELECT * FROM ManufactureDetail"
         cursor.execute(query)
-        details=cursor.fetchall()
+        details = cursor.fetchall()
+        cursor.close()
         return details
     
     def does_manufacture_exist(self, ManufactureID):
         cursor=self.dbconn.cursor()
-        query ="SELECT * FROM manufacturedetail WHERE ManufactureID = %s"
+        query = "SELECT * FROM ManufactureDetail WHERE ManufactureID = %s"
         cursor.execute(query, (ManufactureID,))
         details = cursor.fetchall()
         return True if details else False

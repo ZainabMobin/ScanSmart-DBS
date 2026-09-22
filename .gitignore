@@ -1,2 +1,5 @@
 __pycache__/
 .env
+*.log
+.venv/
+qr_generator/

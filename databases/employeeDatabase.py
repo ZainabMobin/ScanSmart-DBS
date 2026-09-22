@@ -2,6 +2,7 @@ class employeeDatabase:
     def __init__(self, dbconn):
         self.dbconn = dbconn
 
+
     def check_email_exists(self, email):
         cursor = self.dbconn.cursor()
         query = "SELECT 1 FROM Employee WHERE Email = %s LIMIT 1"
@@ -19,6 +20,7 @@ class employeeDatabase:
         cursor.close()
         return encrypted_password[0] if encrypted_password else None
 
+
     def check_contact_exists(self, ContactNumber):
         cursor = self.dbconn.cursor()
         query = "SELECT 1 FROM Employee WHERE ContactNumber = %s LIMIT 1"
@@ -26,6 +28,7 @@ class employeeDatabase:
         result = cursor.fetchone()
         cursor.close()
         return True if result else False
+
         
     def get_id_by_email(self, email):
         cursor = self.dbconn.cursor()
@@ -34,6 +37,7 @@ class employeeDatabase:
         emp_id = cursor.fetchone()
         cursor.close()
         return emp_id[0] if emp_id else None #need to return tuple back to the service layer
+
 
     def get_role_from_id(self, emp_id):
         cursor = self.dbconn.cursor()
@@ -66,9 +70,8 @@ class employeeDatabase:
     #get all employeed detail from database
     def get_employee_details(self):
         cursor = self.dbconn.cursor()
-        query = "SELECT EmployeeID,Name,Role,ContactNumber,Email FROM employee"
+        query = "SELECT EmployeeID,Name,Role,ContactNumber,Email FROM Employee"
         cursor.execute(query)
         result = cursor.fetchall()  # fetch all results
         cursor.close()              # close cursor
         return result
-        # return cursor.fetchall()

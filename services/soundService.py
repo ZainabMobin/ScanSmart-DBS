@@ -6,13 +6,15 @@ logger = logging.getLogger(__name__)
 class soundService:
     def __init__(self, frequency: int = 1000, duration_ms: int = 500):
         self.os_type = platform.system()
-        logger.info("init SoundService on platform: {self.os_type}")
-        self._init_sound_module()
+        logger.info("init SoundService on platform: f{self.os_type}")
         self.frequency = frequency
         self.duration_ms = duration_ms
+        self.sound_module = None
         # linux specific audio generation
         self.sample_rate = 0
         self.wave = []
+
+        self._init_sound_module()
 
 
     def _init_sound_module(self):
@@ -39,14 +41,15 @@ class soundService:
                     255 if (i % cycle_length) < (cycle_length / 2) else 0 
                     for i in range(total_samples)
                 )
-
-            except (ImportError, OSError):
-                logger.warning("Failed to load ossaudiodev module. Playing fallback sound")
-                self._play_sound_fallback()
-                
-
+            except (ImportError, OSError, AttributeError):
+                logger.warning("Failed to load sounddevice module")
+                self.sound_module = None
 
     def play_sound(self):
+        if not self.sound_module:
+            self._play_sound_fallback()
+            return
+
         if self.os_type == "Windows":
             self._play_sound_windows()
         elif self.os_type == "Linux":
@@ -61,9 +64,9 @@ class soundService:
         self.sound_module.wait()  # Block execution until the sound finishes playing
 
 
-    def _play_sound_windows(self, frequency, duration_ms):
+    def _play_sound_windows(self):
         # need to import relevant module, play sound via the self.soundModule
-        self.sound_module.Beep(frequency, duration_ms)
+        self.sound_module.Beep(self.frequency, self.duration_ms)
 
 
     # Fallback for Docker / headless Linux environments (ASCII terminal bell)

@@ -4,14 +4,15 @@ from models.Product import Product
 from databases.employeeDatabase import employeeDatabase
 from databases.billDatabase import billDatabase
 from databases.productDatabase import productDatabase
-from services.scannerService import ScannerService
+# from services.scannerService import ScannerService
 from services.soundServiceSingleton import soundServiceSingleton
 from collections import defaultdict #to create dict of bill details grouped by BillID
 from datetime import datetime #to create data in the correct format
-import cv2 #for camera scanning, additionally installed libs are qrcode, opencv
+# import cv2 #for camera scanning, additionally installed libs are qrcode, opencv
 
-cap = cv2.VideoCapture(0)
-detector = cv2.QRCodeDetector()
+# cap = cv2.VideoCapture(0)
+# detector = cv2.QRCodeDetector()
+
 
 def get_bills_from_db(dbconn, EmployeeID = None): #function overloading for when TOTAL bills are needed vs when a cashier views their own bills
     productDb = productDatabase(dbconn)
@@ -61,7 +62,7 @@ def scan_bill(dbconn, detail_list, scanner, seen_set):
 
         detail_list.append(billDetail)
         print(f"appended billdetail: {billDetail.BillID} {billDetail.QuantitySold} {billDetail.UnitPrice} {billDetail.TotalAmount}")
-        soundServiceSingleton.play_sound(1000, 500)
+        soundServiceSingleton().play_sound()
 
     return detail_list, True
 
@@ -91,6 +92,7 @@ def create_bill(detail_list, EmployeeID):
         totalAmount = totalAmount + detail.TotalAmount
     bill = Bill(Date=date, TotalAmount=totalAmount, EmployeeID=EmployeeID)
     return bill
+
 
 def get_latest_billid_from_db(dbconn):
     billDb = billDatabase(dbconn)

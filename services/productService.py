@@ -1,9 +1,9 @@
 from databases.productDatabase import productDatabase
 from databases.manufactureDatabase import manufactureDatabase 
 from services.soundServiceSingleton import soundServiceSingleton
+from services.scannerService import decode_frame
 from models.Product import Product
 import cv2
-from pyzbar import pyzbar
 
 
 #checks price validity 
@@ -59,11 +59,11 @@ def scan_product_barcode(dbconn):
             break
 
         # Detect barcodes
-        barcodes = pyzbar.decode(frame)
+        barcodes = decode_frame(frame)
         for barcode in barcodes:
             barcode_data = barcode.data.decode('utf-8')
             print(f"Scanned Product ID: {barcode_data}")
-            soundServiceSingleton.play_sound(1000, 500)
+            soundServiceSingleton().play_sound()
 
             if (productDatabase_obj.finding_prod(int(barcode_data))):
                 cap.release()
@@ -104,6 +104,6 @@ def scan_product(dbconn, detail_list, scanner):
         
         product = Product(*product_tuple)
         detail_list.append(product)
-        soundServiceSingleton.play_sound(1000, 500)  
+        soundServiceSingleton().play_sound()  
 
     return detail_list, True

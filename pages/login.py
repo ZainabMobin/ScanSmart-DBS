@@ -197,6 +197,9 @@ def loginPage():
         if st.button("Login"):
             if email and password:
                 role, st.session_state.empID = validate_login(dbconn, email, password)
+                print("Login successful, validate_login() returned: ", role, ", ", st.session_state.empID)
+
+
                 if role == "Not Found":
                     st.error("Account Not Found!")
                 else:
