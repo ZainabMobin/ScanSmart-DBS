@@ -18,7 +18,7 @@ if "role" not in st.session_state:
 
 # ------------loginPage--------------
 if st.session_state.page == "login":
-    loginPage()
+    loginPage(dbconn)
      
 # ----------Cashier page-------------
 elif st.session_state.page == "Cashier":

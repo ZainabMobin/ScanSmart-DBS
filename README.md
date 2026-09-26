@@ -69,8 +69,7 @@ streamlit run app.py    # run the webapp
 **Naming Convention**
 
 - Functions: snake_case
-- Classes: camelCase
-- File Name: PascalCase
+- Class and File name: camelCase
 
 ## Module info:
 
@@ -93,3 +92,98 @@ Forms streamlit based interface for multiple pages
 **Services:**
 
 All Data formatting, encryption/decryption and business logic is applied in the service layer
+
+# Docker guide
+
+Package names and versions without versions in requirements.txt
+```
+PlainText
+bcrypt==5.0.0
+matplotlib==3.11.2
+mysql-connector-python==26.7.0
+opencv-python-headless==5.0.0.93
+pandas==3.0.6
+python-dotenv==1.2.3
+python-lucide==0.5.6
+pyzbar==0.1.9
+qrcode==8.2
+sounddevice
+streamlit==1.64.0
+```
+
+## `.env` file fields
+
+```env
+DB_HOST=127.0.0.1
+DB_USER=*******
+DB_PASSWORD=*******
+DB_NAME=inventory_management
+DB_PORT=3306
+MYSQL_ROOT_PASSWORD=********
+STREAMLIT_PORT_HOST=8501
+STREAMLIT_PORT_CONTAINER=8501
+STREAMLIT_SERVER_ADDRESS=0.0.0.0
+```
+
+Note on DB_HOST: Inside Docker Compose, containers communicate using service names as hostname aliases. Set DB_HOST=db so your Python app routes traffic to the MySQL container service named db.
+
+## Configuration Steps
+
+Step 1: Initial Build and Launch
+
+To build the images, create the network, initialize the database schema, and launch everything in the background:
+```Bash
+docker compose up --build -d |& tee debug.log
+```
+- --build forces Docker to build the Python image using the Dockerfile and requirements.txt.
+
+- -d runs the container in the background/detached mode.
+
+Step 2: Verify and View Logs
+
+To check if both containers (mysql_db and streamlit_app) are healthy and running:
+```Bash
+docker compose ps
+```
+
+```Bash
+docker compose logs -f web # view live logs 
+```
+
+To watch live logs from the MySQL database:
+```Bash
+docker compose logs -f db
+```
+
+At this point, open your browser and go to http://localhost:8501 (or whatever STREAMLIT_PORT_HOST is set to in your .env).
+
+Everyday Workflow: How to Manage Day-to-Day Running
+
+Once the initial setup is complete, here is how you interact with it daily:
+
+1. Stopping the Application
+
+When you finish working, stop the containers. Your database data remains safely stored in the mysql_data volume:
+
+```Bash
+docker compose stop
+```
+
+2. Starting the Application Back Up
+
+To start the app again without rebuilding:
+
+```Bash
+docker compose start
+```
+
+3. Completely Shutting Down (Preserving Data)
+
+To stop and remove the active containers while retaining all database records and tables:
+```Bash
+docker compose down
+```
+
+Run docker compose up --build when you modify structural configuration, like adding a new package to requirements.tx, changed your Dockerfile or docker compose.yml, or environment variables in .env.
+
+Streamlit auto-reloads changes inside the running container instantly if teh python application code is changed

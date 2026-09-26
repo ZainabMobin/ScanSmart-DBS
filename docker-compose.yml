@@ -1,0 +1,59 @@
+name: scansmart
+
+services:
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    command: --lower_case_table_names=1
+    # force MySQL inside Docker to ignore table name casing, as done in Windows
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      # Named volume maps internal MySQL data directory to persistent host storage
+      - mysql_data:/var/lib/mysql
+      - ./databases/schema_creation.txt:/docker-entrypoint-initdb.d/01_schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # Streamlit Web Application Service
+  web:
+    container_name: streamlit_app
+    image: scansmart-web:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Documentation purposes: specifying Dockerfile here is redundant; Docker defaults to ./Dockerfile when context: . is used
+      args:
+        # pass variable for use in Dockerfile
+        STREAMLIT_PORT_CONTAINER: ${STREAMLIT_PORT_CONTAINER}
+        STREAMLIT_PORT_HOST: ${STREAMLIT_PORT_HOST}
+    restart: always
+    ports:
+      - "${STREAMLIT_PORT_HOST}:${STREAMLIT_PORT_CONTAINER}"
+    environment:
+      # Python app inside Docker connects to 'db' service inside Docker as DB_USER=root
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      # streamlit binds to internal container port
+      STREAMLIT_SERVER_PORT: ${STREAMLIT_PORT_CONTAINER}
+      STREAMLIT_SERVER_ADDRESS: ${STREAMLIT_SERVER_ADDRESS}
+    depends_on:
+      db:
+        condition: service_healthy
+
+# Declaring the persistent named volume
+volumes:
+  mysql_data:
+    driver: local

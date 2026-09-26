@@ -3,9 +3,7 @@ from lucide import lucide_icon
 from databases.mysql_connector import connect_db
 from services.employeeService import validate_login
 
-dbconn=connect_db()
-
-def loginPage():
+def loginPage(dbconn):
     # Hide Streamlit header
     st.markdown("""<style>header {display: none !important;}</style>""", unsafe_allow_html=True)
 

@@ -1,0 +1,11 @@
+bcrypt
+matplotlib
+mysql-connector-python
+opencv-python-headless
+pandas
+python-dotenv
+python-lucide
+pyzbar
+qrcode
+sounddevice
+streamlit
