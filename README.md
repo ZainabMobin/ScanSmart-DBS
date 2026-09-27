@@ -116,17 +116,20 @@ streamlit==1.64.0
 
 ```env
 DB_HOST=127.0.0.1
-DB_USER=*******
-DB_PASSWORD=*******
+DB_USER=*********
+DB_PASSWORD=***********
+MYSQL_HOST=db
+MYSQL_USER=root
+MYSQL_PASSWORD=rootpassword123
 DB_NAME=inventory_management
-DB_PORT=3306
-MYSQL_ROOT_PASSWORD=********
+DB_PORT_HOST=3306
+DB_PORT_CONTAINER=3306
 STREAMLIT_PORT_HOST=8501
 STREAMLIT_PORT_CONTAINER=8501
 STREAMLIT_SERVER_ADDRESS=0.0.0.0
 ```
 
-Note on DB_HOST: Inside Docker Compose, containers communicate using service names as hostname aliases. Set DB_HOST=db so your Python app routes traffic to the MySQL container service named db.
+Note on MY_SQL_HOST: Inside Docker Compose, containers communicate using service names as hostname aliases. Set MY_SQL_HOST=db so your Python app routes traffic to the MySQL container service named db.
 
 ## Configuration Steps
 
@@ -163,7 +166,7 @@ docker compose start
 docker compose down
 ```
 
-![TIP] Run `docker compose up --build` modified structural configuration, like adding a new package to requirements.txt, changing  Dockerfile or docker compose.yml, or environment variables in .env.
+>[TIP] Run `docker compose up --build` modified structural configuration, like adding a new package to requirements.txt, changing  Dockerfile or docker compose.yml or environment variables in .env.
 
 Streamlit auto-reloads changes inside the running container instantly if the python application code is changed
 
