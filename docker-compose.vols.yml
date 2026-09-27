@@ -9,10 +9,11 @@ services:
     # force MySQL inside Docker to ignore table name casing, as done in Windows
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "${DB_PORT}:3306"
+      - "${DB_PORT_HOST}:${DB_PORT_CONTAINER}"
+      # - "\({HOST_PORT}:\){CONTAINER_PORT}"
     volumes:
       # Named volume maps internal MySQL data directory to persistent host storage
       - mysql_data:/var/lib/mysql
@@ -31,7 +32,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # Documentation purposes: specifying Dockerfile here is redundant; Docker defaults to ./Dockerfile when context: . is used
+      # Documentation purposes: specifying Dockerfile here is redundant for this case
+      # Docker searches for ./Dockerfile in root dir when "context: ." is used
       args:
         # pass variable for use in Dockerfile
         STREAMLIT_PORT_CONTAINER: ${STREAMLIT_PORT_CONTAINER}
@@ -39,13 +41,14 @@ services:
     restart: always
     ports:
       - "${STREAMLIT_PORT_HOST}:${STREAMLIT_PORT_CONTAINER}"
+      # - "\({STREAMLIT_PORT_HOST}:\){STREAMLIT_PORT_CONTAINER}"
     environment:
       # Python app inside Docker connects to 'db' service inside Docker as DB_USER=root
-      DB_HOST: ${DB_HOST}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${MYSQL_HOST}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: ${DB_NAME}
-      DB_PORT: ${DB_PORT}
+      DB_PORT: ${DB_PORT_CONTAINER}
       # streamlit binds to internal container port
       STREAMLIT_SERVER_PORT: ${STREAMLIT_PORT_CONTAINER}
       STREAMLIT_SERVER_ADDRESS: ${STREAMLIT_SERVER_ADDRESS}
