@@ -1,0 +1,27 @@
+name: scansmart-localdb
+
+services:
+  web:
+    container_name: streamlit_app_local
+    image: scansmart-web:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        STREAMLIT_PORT_CONTAINER: ${STREAMLIT_PORT_CONTAINER}
+        STREAMLIT_PORT_HOST: ${STREAMLIT_PORT_HOST}
+    restart: always
+    ports:
+      - "${STREAMLIT_PORT_HOST}:${STREAMLIT_PORT_CONTAINER}"
+    environment:
+      DB_HOST: "host.docker.internal"
+      # DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      STREAMLIT_SERVER_PORT: ${STREAMLIT_PORT_CONTAINER}
+      STREAMLIT_SERVER_ADDRESS: ${STREAMLIT_SERVER_ADDRESS}
+    # for linux container to route traffic from host's loopback interference
+    extra_hosts:
+     - "host.docker.internal:host-gateway"

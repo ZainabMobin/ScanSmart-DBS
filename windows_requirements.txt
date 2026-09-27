@@ -1,0 +1,11 @@
+qr
+cv2
+opencv
+streamlit
+pyzbar
+winsound
+bcrypt
+matplotlib
+pandas
+dotenv
+mysqlconnector
