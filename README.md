@@ -1,5 +1,24 @@
+# ScanSmart
+
+Desktop-based inventory management and billing system for retail sector
+
+<div align="center">
+
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=fff)](#)
+[![Python](https://img.shields.io/badge/Python-F5C400?logo=python&logoColor=fff)](#)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=fff)](#)
+[![CSS](https://img.shields.io/badge/CSS-639?logo=css&logoColor=fff)](#)
+[![Pytest](https://img.shields.io/badge/Pytest-fff?logo=pytest&logoColor=000)](#)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](#)
+[![GNU GPLv3](https://img.shields.io/badge/GNU%20GPLv3-%23A91D22.svg?logo=gnu&logoColor=white)](LICENSE)
+[![Academic Project](https://img.shields.io/badge/Academic-Database%20Systems-darkgreen?logo=googlescholar)](#)
+
+</div>
+
 # About
-ScanSmart is a desktop-based inventory management and billing system developed as part of the CS:220 Database Systems course. The system is designed to support day-to-day retail operations by enabling product scanning, dynamic billing, inventory management, and role-based access for administrators and cashiers. A QR scanning feature that works via desktop webcam makes it accessable and .
+
+ScanSmart is a desktop-based inventory management and billing system developed as part of the CS:220 Database Systems course. The system is designed to support day-to-day retail operations by enabling product scanning, dynamic billing, inventory management, and role-based access for administrators and cashiers. A QR scanning feature that works via desktop webcam makes it accessable.
 
 Built using Streamlit and Python, with a MySQL relational database, ScanSmart emphasizes secure database interactions, modular backend design and real-time operational insight through analytical reporting.
 
@@ -166,7 +185,7 @@ docker compose start
 docker compose down
 ```
 
->[TIP] Run `docker compose up --build` modified structural configuration, like adding a new package to requirements.txt, changing  Dockerfile or docker compose.yml or environment variables in .env.
+> ![TIP] Run `docker compose up --build` modified structural configuration, like adding a new package to requirements.txt, changing  Dockerfile or docker compose.yml or environment variables in .env.
 
 Streamlit auto-reloads changes inside the running container instantly if the python application code is changed
 
